@@ -1,26 +1,47 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-
-function App() {
+import React from "react";
+import { Provider } from "react-redux";
+import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
+import { store } from "./Redux/index";
+import Login from "./Components/Login/index";
+import SignUp from "./Components/SignUp";
+import Dashboard from "./Components/Dashboard";
+import GlobalStyles from "./Components/GlobalStyles";
+import LayoutDashboard from "./Layout/index";
+import NewCollection from "./Components/NewCollection";
+import ListCollections from "./Components/ListCollections";
+const App = (props) => {
+  const is_login = () => {
+    if (!props.access) {
+      return <Redirect to="/login" />;
+    }
+  };
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Provider store={store}>
+      <GlobalStyles />
+      <BrowserRouter>
+        <Switch>
+          <Route exact path="/login" component={Login} />
+          <Route exact path="/signup" component={SignUp} />
+
+          <Route>
+            <LayoutDashboard>
+              <Switch>
+                <Route exact path="/add-collection" component={NewCollection} />
+                <Route exact path="/feed" component={Dashboard} />
+                <Route
+                  exact
+                  path="/list-collections"
+                  component={ListCollections}
+                />
+                <Redirect from="/" to="/feed" />
+                {is_login()}
+              </Switch>
+            </LayoutDashboard>
+          </Route>
+        </Switch>
+      </BrowserRouter>
+    </Provider>
   );
-}
+};
 
 export default App;
